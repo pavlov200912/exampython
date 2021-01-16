@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "ghgist"
+version = "0.1.0"
+description = ""
+authors = ["Pavlov Ivan <pavlov200912@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pytest = "^5.2"
+requests = "^2.25.1"
+mypy = "^0.790"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+ghgist = 'ghgist.console:run'
