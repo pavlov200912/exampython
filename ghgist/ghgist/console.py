@@ -56,6 +56,7 @@ def help_command(arguments) -> None:
 def list_command(arguments: List[str]) -> None:
     if len(arguments) > 1:
         print("Too many arguments for list command")
+        return
     token = load_token_safe()
     gist_list = logic.list_gists(token)
     for gist_info in gist_list:
@@ -65,6 +66,7 @@ def list_command(arguments: List[str]) -> None:
 def create_command(arguments: List[str]) -> None:
     if len(arguments) != 2:
         print("Required 1 argument for create command")
+        return
     token = load_token_safe()
     logic.create(token, filename=arguments[1])
 
@@ -72,6 +74,7 @@ def create_command(arguments: List[str]) -> None:
 def update_command(arguments: List[str]) -> None:
     if len(arguments) != 3:
         print("Required 2 argument for update command")
+        return
     token = load_token_safe()
     logic.update(token, gist_id=arguments[1], filename=arguments[2])
 
@@ -79,6 +82,7 @@ def update_command(arguments: List[str]) -> None:
 def download_command(arguments: List[str]) -> None:
     if len(arguments) != 3:
         print("Required 2 argument for download command")
+        return
     token = load_token_safe()
     logic.download(token, gist_id=arguments[1], dest_path=arguments[2])
 
@@ -86,6 +90,7 @@ def download_command(arguments: List[str]) -> None:
 def delete_command(arguments: List[str]) -> None:
     if len(arguments) != 2:
         print("Required 1 argument for create command")
+        return
     token = load_token_safe()
     logic.delete(token, gist_id=arguments[1])
 

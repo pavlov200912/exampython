@@ -11,7 +11,7 @@ import requests
 import json
 
 GITHUB_API="https://api.github.com"
-API_TOKEN='0067da0d3c2d2897a86ad3edf60303f175ba6901'
+API_TOKEN='a4232237b1b396c7f59f421fec095fad82f3f0c2'
 
 #form a request URL
 url=GITHUB_API+"/gists"
