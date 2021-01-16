@@ -6,18 +6,31 @@ import requests
 GITHUB_API: Final = "https://api.github.com"
 
 
+def api_call(url, http_method: str, token: str, payload=None):
+    if payload is None:
+        payload = {}
+    headers = {'Authorization': f'token {token}'}
+    params = {'scope': 'gist'}
+
+    http_methods = {
+        'get': requests.get,
+        'post': requests.post,
+        'patch': requests.patch,
+        'delete': requests.delete
+    }
+
+    method = http_methods[http_method]
+    res = method(url, headers=headers, params=params,
+                 data=json.dumps(payload))
+    res.raise_for_status()
+    return res.json()
+
+
 def list_gists(token: str) -> List[Tuple[str, str, str]]:
     url = GITHUB_API + "/gists"
 
-    headers = {'Authorization': 'token %s' % token}
-    params = {'scope': 'gist'}
-    payload = {}
+    parsed_response = api_call(url, 'get', token)
 
-    res = requests.get(url, headers=headers, params=params,
-                       data=json.dumps(payload))
-    res.raise_for_status()
-
-    parsed_response = res.json()
     gist_list = []
     for gist_info in parsed_response:
         id = gist_info['id']
@@ -34,8 +47,6 @@ def create(token: str, filename: str) -> None:
     with open(filename, 'r') as content_file:
         content = content_file.read()
 
-    headers = {'Authorization': 'token %s' % token}
-    params = {'scope': 'gist'}
     payload = {"description": "GIST created by ghgist",
                "public": True,
                "files": {
@@ -43,10 +54,7 @@ def create(token: str, filename: str) -> None:
                }
                }
 
-    res = requests.post(url, headers=headers, params=params,
-                        data=json.dumps(payload))
-
-    res.raise_for_status()
+    api_call(url, 'post', token, payload)
 
 
 def update(token: str, gist_id: str, filename: str):
@@ -55,8 +63,6 @@ def update(token: str, gist_id: str, filename: str):
     with open(filename, 'r') as content_file:
         content = content_file.read()
 
-    headers = {'Authorization': 'token %s' % token}
-    params = {'scope': 'gist'}
     payload = {"description": "GIST created by ghgist",
                "gist_id": gist_id,
                "files": {
@@ -64,25 +70,15 @@ def update(token: str, gist_id: str, filename: str):
                }
                }
 
-    res = requests.patch(url, headers=headers, params=params,
-                         data=json.dumps(payload))
-
-    res.raise_for_status()
+    api_call(url, 'patch', token, payload)
 
 
 def download(token: str, gist_id: str, dest_path: str) -> None:
     url = GITHUB_API + "/gists/" + gist_id
-
-    headers = {'Authorization': 'token %s' % token}
-    params = {'scope': 'gist'}
     payload = {"gist_id": gist_id}
 
-    res = requests.get(url, headers=headers, params=params,
-                       data=json.dumps(payload))
+    parsed_response = api_call(url, 'get', token, payload)
 
-    res.raise_for_status()
-
-    parsed_response = res.json()
     gist_files = parsed_response['files']
     gist_content = list(gist_files.values())[0]['content']
 
@@ -92,12 +88,6 @@ def download(token: str, gist_id: str, dest_path: str) -> None:
 
 def delete(token: str, gist_id: str):
     url = GITHUB_API + "/gists/" + gist_id
-
-    headers = {'Authorization': 'token %s' % token}
-    params = {'scope': 'gist'}
     payload = {"gist_id": gist_id}
 
-    res = requests.delete(url, headers=headers, params=params,
-                          data=json.dumps(payload))
-
-    res.raise_for_status()
+    api_call(url, 'delete', token, payload)
