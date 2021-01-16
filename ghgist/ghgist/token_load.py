@@ -5,7 +5,7 @@ class InvalidTokenException(Exception):
     ...
 
 
-def load(path: str = '.ghgist'):
+def load(path: str = '.ghgist') -> str:
     with open(path, 'r') as config_file:
         try:
             config = json.loads(config_file.read())

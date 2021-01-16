@@ -1,12 +1,11 @@
 import sys
 from typing import List
-import token_load
-import logic
+from ghgist import token_load
+from ghgist import logic
+
 
 def run() -> None:
     arguments = sys.argv[1:]
-
-    print(sys.argv, arguments)
 
     if len(arguments) == 0:
         help_command(arguments=[])
@@ -31,9 +30,10 @@ def run() -> None:
 
 def load_token_safe() -> str:
     try:
-        return token_load.load()
+        token = token_load.load()
     except token_load.InvalidTokenException as e:
         print(e)
+    return token
 
 
 def help_command(arguments) -> None:
@@ -57,22 +57,37 @@ def list_command(arguments: List[str]) -> None:
     if len(arguments) > 1:
         print("Too many arguments for list command")
     token = load_token_safe()
+    gist_list = logic.list_gists(token)
+    for gist_info in gist_list:
+        print(f"{gist_info[0]} {gist_info[1]}:{gist_info[2]}")
 
 
 def create_command(arguments: List[str]) -> None:
-    ...
+    if len(arguments) != 2:
+        print("Required 1 argument for create command")
+    token = load_token_safe()
+    logic.create(token, filename=arguments[1])
 
 
 def update_command(arguments: List[str]) -> None:
-    ...
+    if len(arguments) != 3:
+        print("Required 2 argument for update command")
+    token = load_token_safe()
+    logic.update(token, gist_id=arguments[1], filename=arguments[2])
 
 
 def download_command(arguments: List[str]) -> None:
-    ...
+    if len(arguments) != 3:
+        print("Required 2 argument for download command")
+    token = load_token_safe()
+    logic.download(token, gist_id=arguments[1], dest_path=arguments[2])
 
 
 def delete_command(arguments: List[str]) -> None:
-    ...
+    if len(arguments) != 2:
+        print("Required 1 argument for create command")
+    token = load_token_safe()
+    logic.delete(token, gist_id=arguments[1])
 
 
 if __name__ == "__main__":
