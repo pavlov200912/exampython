@@ -70,7 +70,7 @@ def update(token: str, gist_id: str, filename: str):
     res.raise_for_status()
 
 
-def download(token: str, gist_id: str, dest_path: str):
+def download(token: str, gist_id: str, dest_path: str) -> None:
     url = GITHUB_API + "/gists/" + gist_id
 
     headers = {'Authorization': 'token %s' % token}
@@ -78,12 +78,16 @@ def download(token: str, gist_id: str, dest_path: str):
     payload = {"gist_id": gist_id}
 
     res = requests.get(url, headers=headers, params=params,
-                         data=json.dumps(payload))
+                       data=json.dumps(payload))
+
+    res.raise_for_status()
 
     parsed_response = res.json()
+    gist_files = parsed_response['files']
+    gist_content = list(gist_files.values())[0]['content']
 
     with open(dest_path, 'w') as file_from_gist:
-
+        file_from_gist.write(gist_content)
 
 
 def delete(token: str, gist_id: str):
@@ -94,6 +98,6 @@ def delete(token: str, gist_id: str):
     payload = {"gist_id": gist_id}
 
     res = requests.delete(url, headers=headers, params=params,
-                         data=json.dumps(payload))
+                          data=json.dumps(payload))
 
     res.raise_for_status()
